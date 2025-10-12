@@ -358,6 +358,32 @@ export const resetPassword = async (req, res) => {
   }
 };
 
+// current user logged in .  getMe
+export const getMe = async (req, res) => {
+  try {
+    const user = req.user;
+    if (!user) {
+      return res.status(400).json({
+        success: false,
+        message: "User not found."
+      })
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "User fetched successfully.",
+      user
+    })
+
+  } catch (error) {
+    console.log("Failed to fetched user", error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error"
+    })
+  }
+};
+
 // Logout Controller
 export const logout = async (req, res) => {
   try {
