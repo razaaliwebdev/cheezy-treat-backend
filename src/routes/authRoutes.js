@@ -6,7 +6,9 @@ import {
   verifyOtp,
   resetPassword,
   logout,
+  getMe,
 } from "../controllers/authController.js";
+import { protect } from '../middlewares/authMiddleware.js'
 
 const router = express.Router();
 
@@ -27,5 +29,9 @@ router.post("/reset-password", resetPassword);
 
 // Logout
 router.post("/logout", logout);
+
+
+// Protected Route 
+router.get("/me", protect, getMe);
 
 export default router;
