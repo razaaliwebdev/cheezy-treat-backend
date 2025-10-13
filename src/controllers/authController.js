@@ -7,13 +7,13 @@ import { sendEmail } from "../utils/sendEmail.js";
 // Register Controller
 export const register = async (req, res) => {
   try {
-    const { name, email, password, role, phone, address } = req.body;
+    const { name, email, password } = req.body;
 
-    if (!name || !email || !password || !role || !phone || !address) {
+    if (!name || !email || !password) {
       return res.status(400).json({
         success: false,
         message:
-          "Name , Email , Password , Phone , Address and Role are required",
+          "All the fields are required",
       });
     }
 
