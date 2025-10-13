@@ -31,9 +31,6 @@ export const register = async (req, res) => {
       name,
       email,
       password: hashedPassword,
-      role,
-      phone,
-      address,
     });
 
     const toEmail = user.email;
@@ -93,7 +90,18 @@ export const register = async (req, res) => {
     return res.status(201).json({
       success: true,
       message: "User registered successfully",
-      user,
+      user: {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        isActive: user.isActive,
+        phone: user.phone,
+        isVerified: user.isVerified,
+        orders: user.orders,
+        address: user.address,
+        profileImage: user.profileImage
+      },
     });
   } catch (error) {
     console.log("Failed to register", error);
@@ -150,7 +158,18 @@ export const login = async (req, res) => {
     return res.status(200).json({
       success: true,
       message: "User logged in successfully",
-      user,
+      user: {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        isActive: user.isActive,
+        phone: user.phone,
+        isVerified: user.isVerified,
+        orders: user.orders,
+        address: user.address,
+        profileImage: user.profileImage
+      },
     });
   } catch (error) {
     console.log("Failed to login", error);
