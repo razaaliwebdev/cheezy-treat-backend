@@ -4,6 +4,7 @@ import { adminOnly, protect } from '../middlewares/authMiddleware.js';
 
 const router = express.Router();
 
+
 // Get All users    Admin
 router.get("/admin/getAllUsers", protect, adminOnly, getAllUsers);
 
