@@ -1,6 +1,7 @@
 import express from "express";
-import { editUserProfile, getAllUsers, userProfile } from "../controllers/userController.js";
+import { getAllUsers, updateUserProfile, userProfile } from "../controllers/userController.js";
 import { adminOnly, protect } from '../middlewares/authMiddleware.js';
+import { upload } from '../middlewares/uploadMiddleware.js'
 
 const router = express.Router();
 
@@ -14,7 +15,7 @@ router.get("/admin/getAllUsers", protect, adminOnly, getAllUsers);
 router.get("/profile", protect, userProfile);
 
 // Edit User Profile
-router.post("/editUserProfile", protect, editUserProfile);
+router.put("/updateUserProfile", protect, upload.single("profileImage"), updateUserProfile);
 
 
 

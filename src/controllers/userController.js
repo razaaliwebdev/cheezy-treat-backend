@@ -77,18 +77,19 @@ export const userProfile = async (req, res) => {
 
 
 // Edit User profile
-export const editUserProfile = async (req, res) => {
+export const updateUserProfile = async (req, res) => {
     try {
-        const userId = req.user?._id; // added from protect middleware
+        const userId = req.user?._id;
+
         if (!userId) {
             return res.status(401).json({
                 success: false,
-                message: "Unauthorized. Please login again.",
+                message: "Unauthorized. Please log in again.",
             });
         }
 
-        // whitelist only allowed fields to prevent malicious updates
-        const allowedFields = ["name", "phone", "address", "profileImage"];
+        // Whitelist allowed fields
+        const allowedFields = ["name", "phone", "address"];
         const updateData = {};
 
         for (const key of allowedFields) {
@@ -97,15 +98,13 @@ export const editUserProfile = async (req, res) => {
             }
         }
 
-        if (Object.keys(updateData).length === 0) {
-            return res.status(400).json({
-                success: false,
-                message: "No valid fields provided for update.",
-            });
+        // Optional: Handle uploaded image via Multer + Cloudinary
+        if (req.file) {
+            updateData.profileImage = req.file.path; // Cloudinary URL or local path
         }
 
-        const updatedUser = await User.findOneAndUpdate(
-            { _id: userId },
+        const updatedUser = await User.findByIdAndUpdate(
+            userId,
             { $set: updateData },
             { new: true, runValidators: true }
         ).select("-password");
@@ -123,7 +122,7 @@ export const editUserProfile = async (req, res) => {
             user: updatedUser,
         });
     } catch (error) {
-        console.error("Profile update error:", error);
+        console.error("❌ Profile update error:", error);
         return res.status(500).json({
             success: false,
             message: "Internal server error.",
