@@ -1,9 +1,10 @@
 import mongoose from "mongoose";
 
 const addressSchema = new mongoose.Schema({
+  addressLine: { type: String },
   street: { type: String },
   city: { type: String },
-  state: { type: String },
+  state: { type: String, enum: ["Punjab", "Sindh", "Khyber Pakhtunkhwa", "Balochistan"] },
   zipCode: { type: String },
 });
 
