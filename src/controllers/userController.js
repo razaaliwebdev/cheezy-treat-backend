@@ -53,21 +53,33 @@ export const getAllUsers = async (req, res) => {
 // Get User profile
 export const userProfile = async (req, res) => {
     try {
-        const user = req.user;
+        const userId = req.params.id;
+
+        const user = await User.findById(userId).select("-password");
+
         if (!user) {
             return res.status(404).json({
                 success: false,
                 message: "User not found."
             })
-        };
+        }
 
         return res.status(200).json({
             success: true,
-            message: "Get user's profile successfully",
-            user
+            message: "User profile fetched successfully",
+            user: {
+                _id: user._id,
+                name: user.name,
+                email: user.email,
+                phone: user.phone,
+                address: user.address,
+                profileImage: user.profileImage,
+                orders: user.orders
+            }
         })
+
     } catch (error) {
-        console.log("Failed to get user's profile.", error);
+        console.log("Failed to get user profile", error);
         return res.status(500).json({
             success: false,
             message: "Internal server error"
@@ -76,10 +88,9 @@ export const userProfile = async (req, res) => {
 }
 
 
-// Edit User profile
 export const updateUserProfile = async (req, res) => {
     try {
-        const userId = req.user?._id;
+        const userId = req.params.id;
 
         if (!userId) {
             return res.status(401).json({
@@ -88,19 +99,45 @@ export const updateUserProfile = async (req, res) => {
             });
         }
 
-        // Whitelist allowed fields
-        const allowedFields = ["name", "phone", "address"];
         const updateData = {};
 
-        for (const key of allowedFields) {
-            if (req.body[key] !== undefined) {
-                updateData[key] = req.body[key];
+        // 🆕 FIXED: Name - optional
+        if (req.body.name && req.body.name.trim() !== '') {
+            updateData.name = req.body.name.trim();
+        }
+
+        // 🆕 FIXED: Phone - optional + VALIDATE
+        if (req.body.phone && req.body.phone.trim() !== '') {
+            const cleanPhone = req.body.phone.replace(/\D/g, ''); // Remove *
+            if (cleanPhone.length === 10 && cleanPhone.startsWith('03')) {
+                updateData.phone = cleanPhone;
             }
         }
 
-        // Optional: Handle uploaded image via Multer + Cloudinary
+        // 🆕 FIXED: Address - PARSE + ARRAY!
+        if (req.body.address) {
+            try {
+                const addressObj = JSON.parse(req.body.address);
+                // 🆕 CRITICAL: Wrap in ARRAY []
+                updateData.address = [addressObj];
+                // console.log('✅ Address array:', updateData.address);
+            } catch (e) {
+                console.log('❌ Address parse error:', e);
+            }
+        }
+
+        // 🆕 Image - optional
         if (req.file) {
-            updateData.profileImage = req.file.path; // Cloudinary URL or local path
+            updateData.profileImage = req.file.path;
+        }
+
+        // 🆕 No changes?
+        if (Object.keys(updateData).length === 0) {
+            return res.status(200).json({
+                success: true,
+                message: "ℹ️ No changes provided.",
+                user: await User.findById(userId).select("-password")
+            });
         }
 
         const updatedUser = await User.findByIdAndUpdate(
@@ -109,23 +146,17 @@ export const updateUserProfile = async (req, res) => {
             { new: true, runValidators: true }
         ).select("-password");
 
-        if (!updatedUser) {
-            return res.status(404).json({
-                success: false,
-                message: "User not found.",
-            });
-        }
-
         return res.status(200).json({
             success: true,
-            message: "Profile updated successfully.",
+            message: "🎉 Profile updated successfully.",
             user: updatedUser,
         });
+
     } catch (error) {
-        console.error("❌ Profile update error:", error);
+        console.error("❌ Profile update error:", error.message);
         return res.status(500).json({
             success: false,
-            message: "Internal server error.",
+            message: error.message || "Internal server error.",
         });
     }
 };

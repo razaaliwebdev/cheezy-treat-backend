@@ -12,10 +12,10 @@ router.get("/admin/getAllUsers", protect, adminOnly, getAllUsers);
 
 
 // Logged in user , Profile
-router.get("/profile", protect, userProfile);
+router.get("/profile/:id", protect, userProfile);
 
 // Edit User Profile
-router.put("/updateUserProfile", protect, upload.single("profileImage"), updateUserProfile);
+router.put("/profile/:id", protect, upload.single("profileImage"), updateUserProfile);
 
 
 
