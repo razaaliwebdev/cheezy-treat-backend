@@ -7,6 +7,7 @@ import userRoutes from "../src/routes/userRoutes.js";
 import productRoutes from "../src/routes/productRoutes.js";
 import orderRoutes from "../src/routes/orderRoutes.js";
 import couponRoutes from "../src/routes/couponRoutes.js";
+import dealRoutes from "../src/routes/dealRoutes.js";
 
 import dotenv from "dotenv";
 dotenv.config();
@@ -29,6 +30,7 @@ app.use(cookieParser());
 app.use("/api/auth", authRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/product", productRoutes);
+app.use("/api/deal", dealRoutes);
 app.use("/api/order", orderRoutes);
 app.use("/api/coupon", couponRoutes);
 
