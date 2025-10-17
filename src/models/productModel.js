@@ -1,96 +1,68 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
-const sizeSchema = new mongoose.Schema({
-  title: {
+const productSchema = new mongoose.Schema({
+  name: {
     type: String,
     required: true,
-    trim: true,
+    trim: true
   },
-  price: {
+  description: {
+    type: String,
+    default: ""
+  },
+  category: {
+    type: String,
+    required: true
+  },
+  basePrice: {
     type: Number,
     required: true,
-    min: 0,
+    min: 0
   },
+  compareAtPrice: {
+    type: Number,
+    default: 0,
+    min: 0
+  },
+  images: [{
+    url: {
+      type: String,
+      required: true
+    },
+    public_id: {
+      type: String,
+      required: true
+    }
+  }],
+  sizes: [{
+    title: {
+      type: String,
+      required: true
+    },
+    price: {
+      type: Number,
+      required: true
+    }
+  }],
+  tags: [{
+    type: String
+  }],
+  isAvailable: {
+    type: Boolean,
+    default: true
+  },
+  inStock: {
+    type: String,
+    enum: ['available', 'out_of_stock', 'limited'],
+    default: 'available'
+  },
+  deletedAt: {
+    type: Date,
+    default: null
+  }
+}, {
+  timestamps: true
 });
 
-const productSchema = new mongoose.Schema(
-  {
-    name: {
-      type: String,
-      required: true,
-      trim: true,
-    },
+export default mongoose.model('Product', productSchema);
 
-    description: {
-      type: String,
-      trim: true,
-    },
-
-    category: {
-      type: String,
-      enum: ["pizza", "burger", "pasta", "sandwich", "drinks"],
-      required: true,
-    },
-
-    images: [
-      {
-        type: String,
-        default:
-          "https://media.istockphoto.com/id/1418025896/vector/pizza-doodle-5.webp?a=1&b=1&s=612x612&w=0&k=20&c=bco3z0XxoTNGcxD0cxULBpk8D9sAs9ZK-q5Ky5s_ybo=",
-      },
-    ],
-
-    basePrice: {
-      type: Number,
-      required: true,
-      min: 0,
-    },
-
-    // 💡 "Line-through" price (original price before discount)
-    compareAtPrice: {
-      type: Number,
-      default: 0,
-    },
-
-    sizes: [sizeSchema],
-
-    tags: [String], // spicy , non-spicy etc
-
-    isAvailable: {
-      type: Boolean,
-      default: true,
-    },
-
-    inStock: {
-      type: String,
-      enum: ["available", "unavailable"],
-      default: "available",
-    },
-
-    createdBy: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User", // you can use "User" if admin is a type of user
-    },
-
-    updatedBy: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-    },
-
-    deletedBy: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-    },
-
-    deletedAt: {
-      type: Date,
-      default: null,
-    },
-  },
-  {
-    timestamps: true,
-  }
-);
-
-const Product = mongoose.model("Product", productSchema);
-export default Product;
