@@ -5,14 +5,14 @@ export const getAllUsers = async (req, res) => {
     try {
 
         // Get query parameters for pagination from URL
-        let { page = 1, limit = 10 } = req.query;
+        let { page = 1, limit = 10, search = "" } = req.query;
 
         // Convert page and limit to integers
         page = Number(page);
         limit = Number(limit);
 
         // Optional search filter (by name or email)
-        const searchQuery = searc ? {
+        const searchQuery = search ? {
             $or: [
                 { name: { $regex: search, $options: 'i' } },
                 { email: { $regex: search, $options: "i" } }

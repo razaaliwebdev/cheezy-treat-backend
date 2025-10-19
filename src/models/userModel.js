@@ -4,7 +4,10 @@ const addressSchema = new mongoose.Schema({
   addressLine: { type: String },
   street: { type: String },
   city: { type: String },
-  state: { type: String, enum: ["Punjab", "Sindh", "Khyber Pakhtunkhwa", "Balochistan"] },
+  state: {
+    type: String,
+    enum: ["Punjab", "Sindh", "Khyber Pakhtunkhwa", "Balochistan"],
+  },
   zipCode: { type: String },
 });
 
@@ -51,8 +54,9 @@ const userSchema = new mongoose.Schema(
         },
         status: {
           type: String,
-          enum: ["prepairing", "out_of_delivery", "delivered", "cancelled"],
-          default: "prepairing",
+          // 🛠️ FIX: Corrected typo from 'prepairing' to 'preparing'
+          enum: ["preparing", "out_of_delivery", "delivered", "cancelled"],
+          default: "preparing",
         },
         totalAmount: {
           type: Number,
@@ -85,5 +89,5 @@ const userSchema = new mongoose.Schema(
 );
 
 const User = mongoose.model("User", userSchema);
-
 export default User;
+

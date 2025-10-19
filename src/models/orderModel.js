@@ -35,9 +35,13 @@ const orderSchema = new mongoose.Schema({
   },
   items: [orderItemSchema],
   shippingAddress: {
+    addressLine: { type: String },
     street: { type: String },
     city: { type: String },
-    state: { type: String },
+    state: {
+      type: String,
+      enum: ["Punjab", "Sindh", "Khyber Pakhtunkhwa", "Balochistan"],
+    },
     zipCode: { type: String },
     country: { type: String },
   },
@@ -59,6 +63,7 @@ const orderSchema = new mongoose.Schema({
   },
   orderStatus: {
     type: String,
+    // 🛠️ FIX: Corrected typo from 'prepairing' to 'preparing'
     enum: ["preparing", "out_of_delivery", "delivered", "cancelled"],
     default: "preparing",
   },
@@ -90,3 +95,4 @@ const orderSchema = new mongoose.Schema({
 
 const Order = mongoose.model("Order", orderSchema);
 export default Order;
+
